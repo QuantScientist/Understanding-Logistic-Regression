@@ -3,6 +3,5 @@ account: rpubs
 server: rpubs.com
 bundleId:
         https://api.rpubs.com/api/v1/document/152877/4ddda346855141a6b56960e59840ec76
-url:
-        http://rpubs.com/publish/claim/152877/47d5374ceba24ab6a354192bc5044215
-when: 1455488135.93047
+url: http://rpubs.com/junworks/152877
+when: 1455567128.4877

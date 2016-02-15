@@ -68,13 +68,7 @@ logisticReg <- function(X, y){
 
 ## Training with NBA shot log dataset
 
-Now let's train our model with the [NBA shot log dataset](http://junma5.weebly.com/data-blog/fun-with-advanced-nba-stats). Specifically, I am interested in how will shot clock, shot distance and defender distance affect shooting performance. Naively, we would think 
-
-* more time remaining in shot clock, 
-* shorter distance to basket,
-* farther to defender 
-
-will all increase the probability of a field goal. Shortly, we will see whether we can statistically prove that.
+Now let's train our model with the [NBA shot log dataset](http://junma5.weebly.com/data-blog/fun-with-advanced-nba-stats). Specifically, I am interested in how will shot clock, shot distance and defender distance affect shooting performance. Naively, we would think _more time remaining in shot clock, shorter distance to basket, farther to defender_ will all increase the probability of a field goal. Shortly, we will see whether we can statistically prove that.
 
 ```{r, message=FALSE, warning=FALSE, cache=TRUE}
 #load the dataset
@@ -127,8 +121,10 @@ logisticPred <- function(mod, X){
 
 Generate a new data grid to see how FG% changes with predictors.  
 ```{r, cache=TRUE}
-newdata <- expand.grid(SHOT_CLOCK = seq(0, 20), 
-                       SHOT_DIST = seq(0, 35), CLOSE_DEF_DIST = seq(1, 7, by = 2))
+newdata <- expand.grid(SHOT_CLOCK = 10, 
+                       SHOT_DIST = seq(2.5, 37.5, by = 5), 
+                       CLOSE_DEF_DIST = seq(1, 7, by=2))
+
 FG <- logisticPred(mod, newdata)
 ```
 
@@ -139,15 +135,18 @@ Shot clock seems to have the least impact, so I will exclude that in this plot.
 ```{r}
 shot.pred <- mutate(newdata, FG = FG)
 
-ggplot(shot.pred) + 
-  geom_point(aes(x= SHOT_DIST, y=FG, color = factor(CLOSE_DEF_DIST)), size = 2) + 
-  ylab('FG%') + xlab('Shot Distance (ft)') + ylim(0, 0.8) + 
-  scale_color_discrete(name="Denfender\nDistance (ft)") +
-  theme_bw(15) + theme(legend.position = c(0.75, 0.82))
+ggplot(shot.pred, aes(x = factor(SHOT_DIST), y = FG, fill = factor(CLOSE_DEF_DIST))) + 
+  geom_bar(stat = "identity",  position = position_dodge(width = .9), width = 0.8) + 
+  ylab('FG%') + xlab('Shot Distance (ft)') + ylim(0, 0.8) +
+  scale_x_discrete(labels=c('0-5', '5-10','10-15','15-20','20-25','25-30','30-35','35+'))+
+  theme_bw(base_size = 13) + 
+  scale_fill_discrete(name="Defender\nDistance (ft)", 
+                      labels=c('0-2', '2-4','4-6','6+'))+
+  theme(legend.position = c(0.65, 0.8))
 
 ```
 
-Indeed, wide open shots in the paint have the highest probability and contested long 3s have the lowest. This plot conveys very similar information as the one I did in my shiny app.
+Indeed, wide open shots in the paint have the highest probability and contested long 3s have the lowest. This plot conveys very similar information as the one I did in my shiny app. However, doing regression smoothens things out (regression to mean?) and losses some important features. For example, the predictions of extreme cases (shot distance < 5ft or > 35ft) are all less drastic than what the reality is.  
 
 ![](http://junma5.weebly.com/uploads/4/6/5/1/46519751/3591117_orig.png)
 
