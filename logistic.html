@@ -113,7 +113,7 @@ grad &lt;- function(theta, X, y){
   #initialize theta
   theta &lt;- matrix(rep(0, ncol(X)), nrow = ncol(X))
   #use the optim function to perform gradient descent
-  costOpti &lt;- optim(matrix(rep(0, 4), nrow = 4), cost, grad, X=X, y=y)
+  costOpti &lt;- optim(theta, cost, grad, X=X, y=y)
   #return coefficients
   return(costOpti$par)
 }</code></pre>

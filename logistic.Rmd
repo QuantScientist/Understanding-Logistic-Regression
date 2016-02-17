@@ -58,7 +58,7 @@ logisticReg <- function(X, y){
   #initialize theta
   theta <- matrix(rep(0, ncol(X)), nrow = ncol(X))
   #use the optim function to perform gradient descent
-  costOpti <- optim(matrix(rep(0, 4), nrow = 4), cost, grad, X=X, y=y)
+  costOpti <- optim(theta, cost, grad, X=X, y=y)
   #return coefficients
   return(costOpti$par)
 }
@@ -96,7 +96,7 @@ Now, look at the signs of the coefficients, we can conclude that increase in SHO
 
 Next, let's compare our self-built model with the `glm()` function.
 
-```{r, cache=TRUE}
+```{r, cache=F}
 mod1 <- glm(as.factor(FGM) ~ SHOT_CLOCK + SHOT_DIST + CLOSE_DEF_DIST, 
             family=binomial(link = "logit"), data=shot.df)
 
@@ -120,7 +120,7 @@ logisticPred <- function(mod, X){
 ```
 
 Generate a new data grid to see how FG% changes with predictors.  
-```{r, cache=TRUE}
+```{r, cache=F}
 newdata <- expand.grid(SHOT_CLOCK = 10, 
                        SHOT_DIST = seq(2.5, 37.5, by = 5), 
                        CLOSE_DEF_DIST = seq(1, 7, by=2))
